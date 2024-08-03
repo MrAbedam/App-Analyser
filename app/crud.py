@@ -2,8 +2,8 @@
 
 from typing import List
 from .models import Application
+from .database import db
 
-db: List[Application] = []
 current_id = 1
 def create_application(app_data: Application) -> Application:
     global current_id
