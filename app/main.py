@@ -4,14 +4,16 @@ from fastapi import FastAPI, HTTPException
 from typing import List
 from .schemas import Application
 from . import crud
-from .database import init_db, reset_db
-
+import json
 app = FastAPI()
 
 
-@app.on_event("startup")
-def on_startup():
-    init_db()
+# TODO (OPTIONAL): add init values
+# @app.on_event("startup")
+# def on_startup():
+#     start_detail = [{"id":1,"name":"app1"}]
+#     with open("sample.json", "w") as outfile:
+#         json.dump(start_detail, outfile)
 
 
 @app.post("/applications/", response_model=Application)
@@ -39,7 +41,6 @@ def delete_application(app_id: int):
         raise HTTPException(status_code=404, detail="Application not found")
     return deleted_app
 
-@app.post("/reset/")
-def reset_database():
-    reset_db()
-    return {"detail": "Database reset"}
+# TODO (OPTIONAL): add full reset
+# @app.post("/reset/")
+# def reset_database():
