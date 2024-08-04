@@ -1,5 +1,3 @@
-# project/run.py
-
 import uvicorn
 from app.main import app
 

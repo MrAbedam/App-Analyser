@@ -1,10 +1,9 @@
-# project/app/models.py
+from sqlalchemy import Column, Integer, String
+from .database import Base
 
 
-from typing import Optional
-from pydantic import BaseModel
+class Application(Base):
+    __tablename__ = "applications"
 
-#TODO: set correct parameters
-class Application(BaseModel):
-    id: Optional[int] = None
-    name: str
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, index=True)
