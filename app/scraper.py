@@ -77,8 +77,8 @@ def fetch_reviews(package_name: str, count: int = 10):
         return []
 def store_in_redis(app_id: str, app_data: dict, review_data: list):
     try:
-        redis_client.set(f"{app_id}:app_data", json.dumps(app_data), ex=5)
-        redis_client.set(f"{app_id}:reviews", json.dumps(review_data), ex=5)
+        redis_client.set(f"{app_id}:app_data", json.dumps(app_data), ex=3600)
+        redis_client.set(f"{app_id}:reviews", json.dumps(review_data), ex=3600)
         print(f"Data for {app_id} stored in Redis.")
     except Exception as e:
         print(f"Error storing data in Redis for {app_id}: {str(e)}")

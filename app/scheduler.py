@@ -8,11 +8,9 @@ from .scraper import fetch_reviews, fetch_app_data
 from .database import SessionLocal
 from . import crud
 
-# Initialize the scheduler
 scheduler = BackgroundScheduler()
 
-def update_reviews():
-    print("WJHERE U AT")
+def update_redis_data():
     print(f"Scheduler triggered at {datetime.now()}")
     db = SessionLocal()
     try:
@@ -22,11 +20,10 @@ def update_reviews():
             fetch_reviews(package_name)
             fetch_app_data(package_name)
     except Exception as e:
-        print(f"Error fetching reviews for {package_name}: {str(e)}")
-        raise HTTPException(status_code=404, detail=f"Review data not found for package: {package_name}")
+        print(f"Error fetching reviews and app_data for {package_name}: {str(e)}")
+        raise HTTPException(status_code=404, detail=f"Review or app data not found for package: {package_name}")
     finally:
         db.close()
 
-# Schedule the job
-scheduler.add_job(update_reviews, IntervalTrigger(seconds=10), id='update_reviews_job', name='Update reviews every 30second')
+scheduler.add_job(update_redis_data, IntervalTrigger(seconds=3600), id='update_redis_data_job', name='Update redis_data every hour')
 scheduler.start()
