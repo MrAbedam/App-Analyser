@@ -1,3 +1,5 @@
+from fastapi import FastAPI
+from .scheduler import scheduler  # Ensure this import is correct
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List, Annotated
@@ -7,7 +9,6 @@ from .scraper import fetch_app_data, fetch_reviews, store_in_redis
 
 models.Base.metadata.create_all(bind=engine)
 init_db()
-#dorost kardan table ha tu pg
 
 app = FastAPI()
 
