@@ -1,7 +1,10 @@
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 from datetime import datetime
-from .scraper import fetch_reviews
+
+from fastapi import HTTPException
+
+from .scraper import fetch_reviews, fetch_app_data
 from .database import SessionLocal
 from . import crud
 
@@ -17,6 +20,10 @@ def update_reviews():
         for package_name in package_names:
             print(f"Fetching reviews for {package_name} at {datetime.now()}")
             fetch_reviews(package_name)
+            fetch_app_data(package_name)
+    except Exception as e:
+        print(f"Error fetching reviews for {package_name}: {str(e)}")
+        raise HTTPException(status_code=404, detail=f"Review data not found for package: {package_name}")
     finally:
         db.close()
 
