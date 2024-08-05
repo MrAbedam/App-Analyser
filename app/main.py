@@ -61,8 +61,8 @@ def scrape_all_app_data(db: Session = Depends(get_db)):
 
         for package_name in package_names:
             app_data = fetch_app_data(package_name)
-            #review_data = fetch_reviews(package_name)
-            #store_in_redis(package_name, app_data, review_data)
+            review_data = fetch_reviews(package_name)
+            store_in_redis(package_name, app_data, review_data)
             print(f"Data for {package_name} stored in Redis.")
 
         return {"detail": "All data has been scraped and stored in Redis."}
