@@ -1,3 +1,4 @@
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 from . import models, schemas
 
@@ -9,6 +10,8 @@ def get_applications(db: Session, skip: int = 0, limit: int = 10):
 
 def create_application(db: Session, app: schemas.ApplicationCreate):
     db_app = models.Application(name=app.name,package_name= app.package_name)
+    if db.query(models.Application).filter(models.Application.name == app.name).first():
+        return ("An application with this name already exists in database!")
     db.add(db_app)
     db.commit()
     db.refresh(db_app)
@@ -29,6 +32,16 @@ def delete_application(db: Session, app_id: int):
         db.delete(db_app)
         db.commit()
     return db_app
+
+def truncate_and_reset_table(db: Session):
+    try:
+        # Execute raw SQL to truncate the table and reset the sequence
+        db.execute(text("TRUNCATE TABLE applications RESTART IDENTITY CASCADE;"))
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        print(f"Error truncating table: {e}")
+        raise
 
 #package name for later on
 # def get_app_names(db: Session):
