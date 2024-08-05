@@ -25,8 +25,8 @@ def create_application(app: schemas.ApplicationCreate, db : db_dependency):
     return crud.create_application(db=db, app=app)
 
 @app.get("/applications/", response_model=List[schemas.Application])
-def read_applications(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
-    applications = crud.get_applications(db, skip=skip, limit=limit)
+def read_applications(db: Session = Depends(get_db)):
+    applications = crud.get_applications(db)
     return applications
 
 @app.put("/applications/{app_id}", response_model=schemas.Application)

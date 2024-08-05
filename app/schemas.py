@@ -2,6 +2,7 @@ from pydantic import BaseModel
 
 class ApplicationBase(BaseModel):
     name: str
+    package_name: str
 
 class ApplicationCreate(ApplicationBase):
     pass

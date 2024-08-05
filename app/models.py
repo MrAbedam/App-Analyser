@@ -9,6 +9,7 @@ class Application(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
+    package_name = Column(String, index=True)
 
 class ExtractedData(Base):
     __tablename__ = "extracted_data"
