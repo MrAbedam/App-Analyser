@@ -22,13 +22,9 @@ def fetch_app_data(package_name: str):
             'score': result.get('score', 0.0),
             'ratings': result.get('ratings', 0),
             'reviews': result.get('reviews', 0),
-            'updated': result.get('updated', ''),
             'version': result.get('version', ''),
             'adSupported': result.get('adSupported', False),
         }
-
-        if isinstance(app_data['updated'], datetime):
-            app_data['updated'] = app_data['updated'].strftime('%Y-%m-%d %H:%M:%S')
 
         if app_data:
             redis_client.set(f"{package_name}:app_data", json.dumps(app_data))

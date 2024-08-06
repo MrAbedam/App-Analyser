@@ -1,5 +1,5 @@
 
-from sqlalchemy import Column, Integer, String, DateTime, Float, ForeignKey, Boolean
+from sqlalchemy import Column, Integer, String, DateTime, Float, ForeignKey, Boolean, BigInteger, UniqueConstraint
 from .database import Base
 from sqlalchemy.orm import relationship
 from datetime import datetime
@@ -17,18 +17,22 @@ class Application(Base):
 class ExtractedData(Base):
     __tablename__ = "extracted_data"
 
-    id = Column(Integer, primary_key=True, index=True)
-    application_id = Column(Integer, ForeignKey('applications.id'), nullable=False)
-    min_download = Column(Integer, index=True)
+    id = Column(BigInteger, primary_key=True, index=True)
+    application_id = Column(BigInteger, ForeignKey('applications.id'), nullable=False)
+    min_download = Column(BigInteger, index=True)
     score = Column(Float)
-    ratings = Column(Integer)
-    reviews = Column(Integer)
-    updated = Column(DateTime)
+    ratings = Column(BigInteger)
+    reviews = Column(BigInteger)
+    updated = Column(BigInteger)
     version = Column(String)
     ad_supported = Column(Boolean)
     timestamp = Column(DateTime, default=datetime.utcnow)
 
     application = relationship("Application", back_populates="extracted_data")
+
+    __table_args__ = (
+        UniqueConstraint('application_id', name='unique_application_id'),
+    )
 
 class Review(Base):
     __tablename__ = "reviews"
