@@ -49,7 +49,7 @@ def fetch_reviews(name: str, count: int = 10):
 
 
         if not isinstance(result, list) or not result:
-            print(f"No reviews found or invalid response for package: {name}")
+            print(f"No reviews found or invalid response for app: {name}")
             return []
 
         review_data = []
@@ -67,7 +67,7 @@ def fetch_reviews(name: str, count: int = 10):
         if review_data:
             redis_client.set(f"{name}:reviews", json.dumps(review_data))
         else:
-            print(f"No valid review data to store for package: {name}")
+            print(f"No valid review data to store for app: {name}")
         return review_data
 
     except Exception as e:

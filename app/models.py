@@ -9,7 +9,7 @@ class Application(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
-    package_name = Column(String, index=True)
+    category = Column(String, index=True)
 
     extracted_data = relationship("ExtractedData", back_populates="application")
     reviews = relationship("Review", back_populates="application")
