@@ -4,10 +4,11 @@ from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List, Annotated
 from . import crud, models, schemas
-from .consumer import  process_apps
+from .consumer import process_data_from_redis
 from .database import SessionLocal, engine, init_db
 from .scraper import fetch_app_data, fetch_reviews, store_in_redis
 from .scheduler import start_scheduler
+
 models.Base.metadata.create_all(bind=engine)
 init_db()
 
@@ -57,13 +58,7 @@ def reset_table(db: db_dependency):
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
 
-@app.get("/process/")
-def process_data_from_redis():
-        try:
-            process_apps()
-            return {"detail": "Data has been processed from Redis to PostgreSQL."}
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Error processing data: {str(e)}")
+
 
 @app.get("/scrape/")
 def scrape_all_app_data(db: Session = Depends(get_db)):

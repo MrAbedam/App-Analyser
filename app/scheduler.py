@@ -4,7 +4,7 @@ from datetime import datetime
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
-from .main import process_data_from_redis
+from .consumer import process_data_from_redis
 from .scraper import fetch_reviews, fetch_app_data, store_in_redis
 from .database import SessionLocal
 from . import crud

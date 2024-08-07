@@ -1,6 +1,9 @@
 import json
 import psycopg2
 from datetime import datetime
+
+from fastapi import HTTPException
+
 from .redis_client import redis_client
 def get_db_connection():
     return psycopg2.connect(
@@ -25,15 +28,17 @@ def insert_all_data(name: str):
             insert_sql = """
             INSERT INTO extracted_data (application_id, min_download, score, ratings, reviews, version, ad_supported, timestamp)
             VALUES ((SELECT id FROM applications WHERE name=%s), %s, %s, %s, %s, %s, %s, %s)
-            ON CONFLICT (application_id) DO UPDATE
-            SET min_download = EXCLUDED.min_download, 
-                score = EXCLUDED.score,
-                ratings = EXCLUDED.ratings,
-                reviews = EXCLUDED.reviews,
-                version = EXCLUDED.version,
-                ad_supported = EXCLUDED.ad_supported,
-                timestamp = EXCLUDED.timestamp
             """
+
+            # ON CONFLICT (application_id) DO UPDATE
+            # min_download = EXCLUDED.min_download,
+            # score = EXCLUDED.score,
+            # ratings = EXCLUDED.ratings,
+            # reviews = EXCLUDED.reviews,
+            # version = EXCLUDED.version,
+            # ad_supported = EXCLUDED.ad_supported,
+            # timestamp = EXCLUDED.timestamp
+
             cur.execute(insert_sql, (
                 name,
                 app_data.get('minInstalls', 0),
@@ -44,7 +49,7 @@ def insert_all_data(name: str):
                 app_data.get('adSupported', False),
                 datetime.utcnow()
             ))
-
+            print ( datetime.utcnow())
             conn.commit()
 
             cur.close()
@@ -54,6 +59,7 @@ def insert_all_data(name: str):
 
 
         cached_review_data = redis_client.get(f"{name}:reviews")
+        print("check1")
         if cached_review_data:
             review_data = json.loads(cached_review_data)
 
@@ -61,7 +67,7 @@ def insert_all_data(name: str):
             conn = get_db_connection()
             cur = conn.cursor()
 
-
+            print("BEGORE HETETETETE")
             for review in review_data:
                 insert_review_sql = """
                 INSERT INTO reviews (application_id, review_id, at, user_name, thumbs_up_count, score, content, timestamp)
@@ -99,3 +105,10 @@ def process_apps():
     for app_key in app_keys:
         app_name = app_key.split(':')[0]
         insert_all_data(app_name)
+
+def process_data_from_redis():
+    try:
+        process_apps()
+        return {"detail": "Data has been processed from Redis to PostgreSQL."}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error processing data: {str(e)}")

@@ -26,13 +26,9 @@ class ExtractedData(Base):
     updated = Column(BigInteger)
     version = Column(String)
     ad_supported = Column(Boolean)
-    timestamp = Column(DateTime, default=datetime.utcnow)
+    timestamp = Column(DateTime)
 
     application = relationship("Application", back_populates="extracted_data")
-
-    __table_args__ = (
-        UniqueConstraint('application_id', name='unique_application_id'),
-    )
 
 class Review(Base):
     __tablename__ = "reviews"
@@ -45,6 +41,6 @@ class Review(Base):
     thumbs_up_count = Column(Integer)
     score = Column(Integer)
     content = Column(String)
-    timestamp = Column(DateTime, default=datetime.utcnow)
+    timestamp = Column(DateTime)
 
     application = relationship("Application", back_populates="reviews")
