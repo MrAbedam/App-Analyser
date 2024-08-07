@@ -3,6 +3,8 @@ from apscheduler.triggers.interval import IntervalTrigger
 from datetime import datetime
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
+
+from .main import process_data_from_redis
 from .scraper import fetch_reviews, fetch_app_data, store_in_redis
 from .database import SessionLocal
 from . import crud
@@ -13,18 +15,19 @@ def update_redis_data():
     print(f"Scheduler triggered at {datetime.now()}")
     db: Session = SessionLocal()
     try:
-        package_names = [pkg[0] for pkg in crud.get_package_names(db)]
-        for package_name in package_names:
-            print(f"Fetching reviews for {package_name} at {datetime.now()}")
-            fetch_reviews(package_name)
-            fetch_app_data(package_name)
+        names = [pkg[0] for pkg in crud.get_names(db)]
+        for name in names:
+            print(f"Fetching reviews for {name} at {datetime.now()}")
+            fetch_reviews(name)
+            fetch_app_data(name)
             # Store fetched data in Redis
-            app_data = fetch_app_data(package_name)
-            review_data = fetch_reviews(package_name)
-            store_in_redis(package_name, app_data, review_data)
+            app_data = fetch_app_data(name)
+            review_data = fetch_reviews(name)
+            store_in_redis(name, app_data, review_data)
+            process_data_from_redis()
     except Exception as e:
-        print(f"Error fetching reviews and app_data for {package_name}: {str(e)}")
-        raise HTTPException(status_code=404, detail=f"Review or app data not found for package: {package_name}")
+        print(f"Error fetching reviews and app_data for {name}: {str(e)}")
+        raise HTTPException(status_code=404, detail=f"Review or app data not found for app: {name}")
     finally:
         db.close()
 
@@ -43,4 +46,6 @@ scheduler.add_job(update_redis_data, IntervalTrigger(seconds=3600), id='update_r
 # # Add job to insert data into PostgreSQL
 # scheduler.add_job(insert_data_into_postgresql, IntervalTrigger(seconds=10), id='insert_data_postgresql_job', name='Insert data into PostgreSQL every 30sec')
 
-scheduler.start()
+def start_scheduler():
+    scheduler.start()
+    print("Scheduler started.")

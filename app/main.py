@@ -7,9 +7,11 @@ from . import crud, models, schemas
 from .consumer import  process_apps
 from .database import SessionLocal, engine, init_db
 from .scraper import fetch_app_data, fetch_reviews, store_in_redis
-
+from .scheduler import start_scheduler
 models.Base.metadata.create_all(bind=engine)
 init_db()
+
+start_scheduler()
 
 app = FastAPI()
 
@@ -73,23 +75,8 @@ def scrape_all_app_data(db: Session = Depends(get_db)):
             app_data = fetch_app_data(name)
             review_data = fetch_reviews(name)
             store_in_redis(name, app_data, review_data)
-        #process_data_from_redis()
+        process_data_from_redis()
         return {"detail": "All data has been scraped and stored in Redis."}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error fetching data: {str(e)}")
-
-# @app.get("/scrape/")
-# def scrape_all_app_data(db: Session = Depends(get_db)):
-#     try:
-#         package_names = [pkg[0] for pkg in crud.get_package_names(db)]
-#
-#
-#         for package_name in package_names:
-#             app_data = fetch_app_data(package_name)
-#             review_data = fetch_reviews(package_name)
-#             store_in_redis(package_name, app_data, review_data)
-#             print(f"Data for {package_name} stored in Redis.")
-#         #process_data_from_redis()
-#         return {"detail": "All data has been scraped and stored in Redis."}
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=f"Error fetching data: {str(e)}")
+    raise HTTPException(status_code=500, detail=f"Error fetching data: {str(e)}")
