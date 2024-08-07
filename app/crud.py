@@ -46,3 +46,6 @@ def truncate_and_reset_table(db: Session):
 
 def get_package_names(db: Session):
     return db.query(models.Application.package_name).all()
+
+def get_names(db: Session):
+    return db.query(models.Application.name).all()

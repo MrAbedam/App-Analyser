@@ -4,7 +4,7 @@ from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List, Annotated
 from . import crud, models, schemas
-from .consumer import process_packages
+from .consumer import  process_apps
 from .database import SessionLocal, engine, init_db
 from .scraper import fetch_app_data, fetch_reviews, store_in_redis
 
@@ -57,24 +57,39 @@ def reset_table(db: db_dependency):
 
 @app.get("/process/")
 def process_data_from_redis():
-    try:
-        process_packages()
-        return {"detail": "Data has been processed from Redis to PostgreSQL."}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error processing data: {str(e)}")
+        try:
+            process_apps()
+            return {"detail": "Data has been processed from Redis to PostgreSQL."}
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Error processing data: {str(e)}")
 
 @app.get("/scrape/")
 def scrape_all_app_data(db: Session = Depends(get_db)):
     try:
-        package_names = [pkg[0] for pkg in crud.get_package_names(db)]
+        names = [name[0] for name in crud.get_names(db)]
 
 
-        for package_name in package_names:
-            app_data = fetch_app_data(package_name)
-            review_data = fetch_reviews(package_name)
-            store_in_redis(package_name, app_data, review_data)
-            print(f"Data for {package_name} stored in Redis.")
-
+        for name in names:
+            app_data = fetch_app_data(name)
+            review_data = fetch_reviews(name)
+            store_in_redis(name, app_data, review_data)
+        #process_data_from_redis()
         return {"detail": "All data has been scraped and stored in Redis."}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error fetching data: {str(e)}")
+
+# @app.get("/scrape/")
+# def scrape_all_app_data(db: Session = Depends(get_db)):
+#     try:
+#         package_names = [pkg[0] for pkg in crud.get_package_names(db)]
+#
+#
+#         for package_name in package_names:
+#             app_data = fetch_app_data(package_name)
+#             review_data = fetch_reviews(package_name)
+#             store_in_redis(package_name, app_data, review_data)
+#             print(f"Data for {package_name} stored in Redis.")
+#         #process_data_from_redis()
+#         return {"detail": "All data has been scraped and stored in Redis."}
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=f"Error fetching data: {str(e)}")
