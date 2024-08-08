@@ -23,7 +23,7 @@ class ExtractedData(Base):
     score = Column(Float)
     ratings = Column(BigInteger)
     reviews = Column(BigInteger)
-    updated = Column(BigInteger)
+    updated = Column(DateTime)
     version = Column(String)
     ad_supported = Column(Boolean)
     timestamp = Column(DateTime)

@@ -24,20 +24,14 @@ def insert_all_data(name: str):
 
             conn = get_db_connection()
             cur = conn.cursor()
-            # TODO: add update to fields
             insert_sql = """
-            INSERT INTO extracted_data (application_id, min_download, score, ratings, reviews, version, ad_supported, timestamp)
-            VALUES ((SELECT id FROM applications WHERE name=%s), %s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO extracted_data (application_id, min_download, score, ratings, reviews, updated, version, ad_supported, timestamp)
+            VALUES ((SELECT id FROM applications WHERE name=%s), %s, %s, %s, %s, %s, %s, %s, %s)
             """
 
-            # ON CONFLICT (application_id) DO UPDATE
-            # min_download = EXCLUDED.min_download,
-            # score = EXCLUDED.score,
-            # ratings = EXCLUDED.ratings,
-            # reviews = EXCLUDED.reviews,
-            # version = EXCLUDED.version,
-            # ad_supported = EXCLUDED.ad_supported,
-            # timestamp = EXCLUDED.timestamp
+            updated_date_str = app_data.get('updated', '')  # Get the updated date string from app_data
+            updated_date = datetime.strptime(updated_date_str,
+                                             '%b %d, %Y') if updated_date_str else None  # Convert to datetime object
 
             cur.execute(insert_sql, (
                 name,
@@ -45,6 +39,7 @@ def insert_all_data(name: str):
                 app_data.get('score', 0.0),
                 app_data.get('ratings', 0),
                 app_data.get('reviews', 0),
+                updated_date,
                 app_data.get('version', ''),
                 app_data.get('adSupported', False),
                 datetime.utcnow()
