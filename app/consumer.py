@@ -49,7 +49,6 @@ def insert_all_data(name: str):
                 app_data.get('adSupported', False),
                 datetime.utcnow()
             ))
-            print ( datetime.utcnow())
             conn.commit()
 
             cur.close()
@@ -59,7 +58,7 @@ def insert_all_data(name: str):
 
 
         cached_review_data = redis_client.get(f"{name}:reviews")
-        print("check1")
+
         if cached_review_data:
             review_data = json.loads(cached_review_data)
 
@@ -67,7 +66,7 @@ def insert_all_data(name: str):
             conn = get_db_connection()
             cur = conn.cursor()
 
-            print("BEGORE HETETETETE")
+
             for review in review_data:
                 insert_review_sql = """
                 INSERT INTO reviews (application_id, review_id, at, user_name, thumbs_up_count, score, content, timestamp)

@@ -7,6 +7,7 @@ import json
 
 def fetch_app_data(name: str):
     try:
+
         cached_data = redis_client.get(f"{name}:app_data")
         if cached_data:
             return json.loads(cached_data)
