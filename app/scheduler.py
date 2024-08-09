@@ -24,27 +24,16 @@ def update_redis_data():
             app_data = fetch_app_data(name)
             review_data = fetch_reviews(name)
             store_in_redis(name, app_data, review_data)
-            process_data_from_redis()
+        #tabbed one back
+        process_data_from_redis()
     except Exception as e:
         print(f"Error fetching reviews and app_data for {name}: {str(e)}")
         raise HTTPException(status_code=404, detail=f"Review or app data not found for app: {name}")
     finally:
         db.close()
 
-# def insert_data_into_postgresql():
-#     print(f"Data insertion process triggered at {datetime.now()}")
-#     try:
-#         process_packages()  # Call the function to process and insert data from Redis to PostgreSQL
-#         print("imtrying to insert them")
-#     except Exception as e:
-#         print(f"Error inserting data into PostgreSQL: {str(e)}")
-#         raise HTTPException(status_code=500, detail=f"Error inserting data into PostgreSQL: {str(e)}")
 
-# Add job to update Redis data
 scheduler.add_job(update_redis_data, IntervalTrigger(seconds=3600), id='update_redis_data_job', name='Update redis_data every hour')
-
-# # Add job to insert data into PostgreSQL
-# scheduler.add_job(insert_data_into_postgresql, IntervalTrigger(seconds=10), id='insert_data_postgresql_job', name='Insert data into PostgreSQL every 30sec')
 
 def start_scheduler():
     scheduler.start()
