@@ -48,15 +48,15 @@ def delete_application(app_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Application not found")
     return crud.delete_application(db=db, app_id=app_id)
 
-@app.post("/reset/")
-def reset_table(db: db_dependency):
-    try:
-        crud.truncate_and_reset_table(db)
-        #redis_client.flushall()
-        return {"detail": "Table truncated, sequence reset cache cleared"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
-
+# @app.post("/reset/")
+# def reset_table(db: db_dependency):
+#     try:
+#         crud.truncate_and_reset_table(db)
+#         #redis_client.flushall()
+#         return {"detail": "Table truncated, sequence reset cache cleared"}
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+#
 
 
 

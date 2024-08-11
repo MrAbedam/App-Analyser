@@ -31,6 +31,8 @@ services:
       - MB_DB_USER=postgres
       - MB_DB_PASS=1234
       - MB_DB_HOST=postgres
+    volumes:
+      - metabase_data:/metabase-data
 
   app:
     build:
@@ -46,3 +48,4 @@ services:
 
 volumes:
   postgres_data:
+  metabase_data:

@@ -1,9 +1,7 @@
 
-from sqlalchemy import Column, Integer, String, DateTime, Float, ForeignKey, Boolean, BigInteger, UniqueConstraint
+from sqlalchemy import Column, Integer, String, DateTime, Float, ForeignKey, Boolean, BigInteger
 from .database import Base
 from sqlalchemy.orm import relationship
-from datetime import datetime
-
 class Application(Base):
     __tablename__ = "applications"
 

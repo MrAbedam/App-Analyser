@@ -34,17 +34,15 @@ def delete_application(db: Session, app_id: int):
         db.commit()
     return db_app
 
-def truncate_and_reset_table(db: Session):
-    try:
-        db.execute(text("TRUNCATE TABLE applications RESTART IDENTITY CASCADE;"))
-        db.commit()
-    except Exception as e:
-        db.rollback()
-        print(f"Error truncating table: {e}")
-        raise
+# def truncate_and_reset_table(db: Session):
+#     try:
+#         db.execute(text("TRUNCATE TABLE applications RESTART IDENTITY CASCADE;"))
+#         db.commit()
+#     except Exception as e:
+#         db.rollback()
+#         print(f"Error truncating table: {e}")
+#         raise
 
-def get_package_names(db: Session):
-    return db.query(models.Application.package_name).all()
 
 def get_names(db: Session):
     return db.query(models.Application.name).all()

@@ -1,4 +1,4 @@
-from fastapi import HTTPException
+
 from google_play_scraper import app, reviews, search
 from .redis_client import redis_client
 from datetime import datetime
@@ -30,10 +30,6 @@ def fetch_app_data(name: str):
             'adSupported': result.get('adSupported', False),
         }
 
-        updated_date_str = app_data.get('updated', '')  # Get the updated date string from app_data
-        updated_date = datetime.strptime(updated_date_str,
-                                         '%b %d, %Y') if updated_date_str else None  # Convert to datetime object
-        print (updated_date)
         if app_data:
             redis_client.set(f"{name}:app_data", json.dumps(app_data))
         else:
@@ -44,7 +40,7 @@ def fetch_app_data(name: str):
         print(f"Error fetching app data for {name}: {str(e)}")
         return {}
 
-def fetch_reviews(name: str, count: int = 100):
+def fetch_reviews(name: str, count: int = 500):
     try:
         cached_reviews = redis_client.get(f"{name}:reviews")
         if cached_reviews:
