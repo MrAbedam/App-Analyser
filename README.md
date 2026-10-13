@@ -168,4 +168,3 @@ MAX_REVIEWS_PER_APP=1000
 
 **Note**: This project is for educational purposes. Ensure compliance with Google Play Store's Terms of Service when using this tool.
 
-[سند پروژه سحابی_نو پایتون.pdf](https://github.com/user-attachments/files/19039940/_.pdf)
